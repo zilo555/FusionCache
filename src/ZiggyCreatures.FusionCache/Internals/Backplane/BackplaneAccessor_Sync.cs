@@ -9,7 +9,7 @@ internal partial class BackplaneAccessor
 {
 	public void Subscribe()
 	{
-		var operationId = FusionCacheInternalUtils.MaybeGenerateOperationId(_logger);
+		var operationId = FusionCacheInternalUtils.GenerateOperationId();
 
 		var channelName = _options.GetBackplaneChannelName();
 
@@ -73,7 +73,7 @@ internal partial class BackplaneAccessor
 
 	public void Unsubscribe()
 	{
-		var operationId = FusionCacheInternalUtils.MaybeGenerateOperationId(_logger);
+		var operationId = FusionCacheInternalUtils.GenerateOperationId();
 
 		try
 		{
@@ -190,7 +190,7 @@ internal partial class BackplaneAccessor
 
 	private void HandleConnect(BackplaneConnectionInfo info)
 	{
-		var operationId = FusionCacheInternalUtils.MaybeGenerateOperationId(_logger);
+		var operationId = FusionCacheInternalUtils.GenerateOperationId();
 
 		if (_logger?.IsEnabled(LogLevel.Information) ?? false)
 			_logger.Log(LogLevel.Information, "FUSION [N={CacheName} I={CacheInstanceId}] (O={CacheOperationId}): [BP] backplane " + (info.IsReconnection ? "re-connected" : "connected"), _cache.CacheName, _cache.InstanceId, operationId);
@@ -208,7 +208,7 @@ internal partial class BackplaneAccessor
 			return;
 		}
 
-		var operationId = FusionCacheInternalUtils.MaybeGenerateOperationId(_logger);
+		var operationId = FusionCacheInternalUtils.GenerateOperationId();
 
 		// IGNORE NULL
 		if (message is null)

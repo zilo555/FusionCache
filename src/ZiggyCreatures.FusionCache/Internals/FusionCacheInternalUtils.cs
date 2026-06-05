@@ -80,13 +80,13 @@ internal static class FusionCacheInternalUtils
 		return DateTimeOffset.UtcNow.UtcTicks;
 	}
 
-	public static string MaybeGenerateOperationId(ILogger? logger)
-	{
-		if (logger is null)
-			return string.Empty;
+	//public static string MaybeGenerateOperationId(ILogger? logger)
+	//{
+	//	if (logger is null)
+	//		return string.Empty;
 
-		return GeneratorUtils.GenerateOperationId();
-	}
+	//	return GeneratorUtils.GenerateOperationId();
+	//}
 
 	public static string GenerateOperationId()
 	{
