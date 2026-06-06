@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace ZiggyCreatures.Caching.Fusion.Internals.Diagnostics;
 
@@ -8,6 +9,16 @@ internal static class Activities
 	public static readonly ActivitySource SourceMemoryLevel = new(FusionCacheDiagnostics.ActivitySourceNameMemoryLevel, FusionCacheDiagnostics.FusionCacheVersion);
 	public static readonly ActivitySource SourceDistributedLevel = new(FusionCacheDiagnostics.ActivitySourceNameDistributedLevel, FusionCacheDiagnostics.FusionCacheVersion);
 	public static readonly ActivitySource SourceBackplane = new(FusionCacheDiagnostics.ActivitySourceNameBackplane, FusionCacheDiagnostics.FusionCacheVersion);
+
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static bool HasAnyListeners()
+	{
+		return
+			Source.HasListeners() ||
+			SourceMemoryLevel.HasListeners() ||
+			SourceDistributedLevel.HasListeners() ||
+			SourceBackplane.HasListeners();
+	}
 
 	internal static class Names
 	{

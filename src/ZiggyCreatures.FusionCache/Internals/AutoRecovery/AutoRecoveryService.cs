@@ -40,7 +40,7 @@ internal sealed class AutoRecoveryService
 			if (_delay <= TimeSpan.Zero)
 			{
 				if (_logger?.IsEnabled(LogLevel.Error) ?? false)
-					_logger.Log(LogLevel.Error, "FUSION [N={CacheName} I={CacheInstanceId}] (O={CacheOperationId}): auto-recovery is enabled but cannot be started because the AutoRecoveryDelay has been set to zero", _cache.CacheName, _cache.InstanceId, FusionCacheInternalUtils.GenerateOperationId());
+					_logger.Log(LogLevel.Error, "FUSION [N={CacheName} I={CacheInstanceId}] (O={CacheOperationId}): auto-recovery is enabled but cannot be started because the AutoRecoveryDelay has been set to zero", _cache.CacheName, _cache.InstanceId, FusionCacheInternalUtils.MaybeGenerateOperationId(_logger));
 			}
 			else
 			{
@@ -597,7 +597,7 @@ internal sealed class AutoRecoveryService
 			var ct = _cts.Token;
 			while (!ct.IsCancellationRequested)
 			{
-				var operationId = FusionCacheInternalUtils.GenerateOperationId();
+				var operationId = FusionCacheInternalUtils.MaybeGenerateOperationId(_logger);
 				var delay = _delay;
 				var nowTicks = DateTimeOffset.UtcNow.Ticks;
 				var barrierTicks = Interlocked.Read(ref _barrierTicks);

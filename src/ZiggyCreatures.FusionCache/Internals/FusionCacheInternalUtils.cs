@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using ZiggyCreatures.Caching.Fusion.Internals.Backplane;
+using ZiggyCreatures.Caching.Fusion.Internals.Diagnostics;
 using ZiggyCreatures.Caching.Fusion.Internals.Distributed;
 using ZiggyCreatures.Caching.Fusion.Internals.Memory;
 
@@ -80,13 +81,16 @@ internal static class FusionCacheInternalUtils
 		return DateTimeOffset.UtcNow.UtcTicks;
 	}
 
-	//public static string MaybeGenerateOperationId(ILogger? logger)
-	//{
-	//	if (logger is null)
-	//		return string.Empty;
+	public static string MaybeGenerateOperationId(ILogger? logger)
+	{
+		//if (logger is null)
+		//	return string.Empty;
 
-	//	return GeneratorUtils.GenerateOperationId();
-	//}
+		if (logger is null && Activities.HasAnyListeners() == false)
+			return string.Empty;
+
+		return GeneratorUtils.GenerateOperationId();
+	}
 
 	public static string GenerateOperationId()
 	{
