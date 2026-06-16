@@ -80,7 +80,7 @@ internal static class Activities
 		return res;
 	}
 
-	public static Activity? StartActivityWithCommonTags(this ActivitySource source, string activityName, string? cacheName, string? cacheInstanceId, string? key, string? operationId, CacheLevelKind? levelKind = null)
+	public static Activity? StartActivityWithCommonTags(this ActivitySource source, string activityName, string? cacheName, string? cacheInstanceId, string? key, string? operationId, CacheLevelKind? levelKind = null, ActivityContext? parentContext = null)
 	{
 		if (source.HasListeners() == false)
 			return null;
@@ -88,7 +88,8 @@ internal static class Activities
 		return source.StartActivity(
 			ActivityKind.Internal,
 			tags: GetCommonTags(cacheName, cacheInstanceId, key, operationId, levelKind),
-			name: activityName
+			name: activityName,
+			parentContext: parentContext ?? Activity.Current?.Context ?? default
 		);
 	}
 

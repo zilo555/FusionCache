@@ -12,7 +12,7 @@ public partial class FusionCache
 {
 	// GET OR SET
 
-	private void MaybeExecuteEagerRefreshWithSyncFactory<TValue>(string operationId, string key, string originalKey, string[]? tags, Func<FusionCacheFactoryExecutionContext<TValue>, CancellationToken, TValue> factory, FusionCacheEntryOptions options, IFusionCacheMemoryEntry memoryEntry, object memoryLockObj, CancellationToken token)
+	private void MaybeExecuteEagerRefreshWithSyncFactory<TValue>(string operationId, string key, string originalKey, string[]? tags, Func<FusionCacheFactoryExecutionContext<TValue>, CancellationToken, TValue> factory, FusionCacheEntryOptions options, IFusionCacheMemoryEntry memoryEntry, object memoryLockObj, ActivityContext parentContext, CancellationToken token)
 	{
 		// TRY TO GET THE DISTRIBUTED LOCK WITHOUT WAITING, SO THAT ONLY THE FIRST NODE WILL ACTUALLY REFRESH THE ENTRY
 		object? distributedLockObj = null;
@@ -39,7 +39,7 @@ public partial class FusionCache
 		_events.OnEagerRefresh(operationId, key);
 
 		// ACTIVITY
-		var activity = Activities.Source.StartActivityWithCommonTags(Activities.Names.ExecuteFactory, CacheName, InstanceId, key, operationId);
+		var activity = Activities.Source.StartActivityWithCommonTags(Activities.Names.ExecuteFactory, CacheName, InstanceId, key, operationId, parentContext: parentContext);
 		activity?.SetTag(Tags.Names.FactoryEagerRefresh, true);
 
 		var ctx = FusionCacheFactoryExecutionContext<TValue>.CreateFromEntries(key, originalKey, options, null, memoryEntry, tags);
@@ -89,9 +89,10 @@ public partial class FusionCache
 				}
 				else
 				{
+					var currentContext = Activity.Current?.Context ?? default;
 					_ = Task.Run(async () =>
 					{
-						MaybeExecuteEagerRefreshWithSyncFactory<TValue>(operationId, key, originalKey, tags, factory, options, memoryEntry!, tmpMemoryLockObj, token);
+						MaybeExecuteEagerRefreshWithSyncFactory<TValue>(operationId, key, originalKey, tags, factory, options, memoryEntry!, tmpMemoryLockObj, currentContext, token);
 					});
 				}
 			}
